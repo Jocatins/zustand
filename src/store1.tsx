@@ -1,0 +1,31 @@
+import { create } from "zustand";
+import axios from "axios";
+
+type StoreType = {
+	data: any;
+	loading: boolean;
+	hasErrors: boolean;
+	fetch: () => Promise<void>;
+};
+
+const useStore1 = create<StoreType>((set) => ({
+	data: [],
+	loading: false,
+	hasErrors: false,
+	fetch: async () => {
+		set(() => ({ loading: true }));
+		try {
+			const response = await axios.get(
+				"https://jsonplaceholder.typicode.com/users/1"
+			);
+			set((state) => ({
+				data: (state.data = response.data),
+				loading: false,
+			}));
+		} catch (err) {
+			set(() => ({ hasErrors: true, loading: false }));
+		}
+	},
+}));
+
+export default useStore1;
